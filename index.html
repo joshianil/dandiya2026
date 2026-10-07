@@ -103,12 +103,15 @@ footer{text-align:center;color:#fff;font-size:13px;margin-top:18px;padding:0 12p
 <footer>Need help? <a href="tel:6362431123">6362431123</a> · <a href="tel:9611840164">9611840164</a> · <a href="tel:8088062859">8088062859</a></footer>
 
 <script>
+window.onerror=function(m,u,l){var d=document.createElement("div");d.style.cssText="background:#fff;color:#b3261e;padding:10px;margin:10px;border-radius:8px;font:13px monospace;position:relative;z-index:9";d.textContent="Page error (line "+l+"): "+m;document.body.prepend(d)};
+</script>
+<script>
 // ====== SETTINGS ======
-const API = "https://script.google.com/macros/s/AKfycbx8b8HUdDGelOcGztFRF9HBn897lS8q_T5f6T3VKQ98_L-kiOGVjsNbGRlJg2uC0V0Aqg/exec";             
+const API = "https://script.google.com/macros/s/AKfycbx8b8HUdDGelOcGztFRF9HBn897lS8q_T5f6T3VKQ98_L-kiOGVjsNbGRlJg2uC0V0Aqg/exec";
 const UPI = "8088062859@kotakbank", PAYEE = "Onestage Creation";
 // Paste your exact Google Maps links here (see instructions)
-const MAP_EMBED = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3845.7274055432913!2d74.96845507617921!3d15.445257155837668!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb8d3007b85fcbb%3A0x8f219ee1bbbb77f8!2sYeligar%20Sports%20Arena!5e0!3m2!1sen!2sin!4v1791405801277!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin";
-const MAP_LINK = "https://maps.app.goo.gl/sVKpnG6FhphpsC2A8";
+const MAP_EMBED = "https://www.google.com/maps?q=Yeligar+Sports+Arena,+Tapovan+Nagar,+Dharwad&output=embed";
+const MAP_LINK = "https://www.google.com/maps/search/?api=1&query=Yeligar+Sports+Arena+Tapovan+Nagar+Dharwad";
 const TICKETS = [
   {k:"stag", n:"Stag", d:"1 person", p:399},
   {k:"couple", n:"Couple", d:"2 people", p:699},

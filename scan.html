@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Staff check-in</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<style>
+:root{--gold:#ffd92e;--ok:#14803c;--bad:#c62828;--warn:#b86e00}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.45 system-ui,sans-serif;background:#1c0b20;color:#fff;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:14px}
+h1{font-size:21px;margin:10px 0 16px;color:var(--gold)}
+input{width:100%;padding:14px;border-radius:10px;border:0;font-size:17px;margin-bottom:10px}
+button{width:100%;padding:14px;border:0;border-radius:10px;background:var(--gold);color:#3b1240;font-weight:700;font-size:17px}
+button.ghost{background:#ffffff26;color:#fff;font-weight:500}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.top button{width:auto;padding:8px 14px;font-size:14px}
+.stats{background:#ffffff14;border-radius:10px;padding:8px 12px;margin:10px 0;font-size:14px}
+#reader{width:100%;border-radius:12px;overflow:hidden;background:#000;min-height:220px}
+#res{display:none;border-radius:14px;padding:16px;margin-top:12px;text-align:center}
+#res.ok{background:var(--ok)}#res.bad{background:var(--bad)}#res.warn{background:var(--warn)}
+#res .big{font-size:26px;font-weight:700}
+#res .name{font-size:22px;font-weight:600;margin:6px 0}
+#res .items{font-size:20px;margin:8px 0}
+#res .band{background:#fff;color:#111;border-radius:10px;padding:10px;font-size:22px;font-weight:700;margin:12px 0}
+#res button{margin-top:10px}
+.hide{display:none}
+</style></head><body><div class="wrap">
+
+<div id="login">
+<h1>Dandiya Darbar · Staff check-in</h1>
+<input id="pw" type="password" placeholder="Staff password" autocomplete="current-password">
+<button id="loginBtn">Log in</button>
+<p id="lerr" style="color:#ff9e9e"></p>
+</div>
+
+<div id="app" class="hide">
+<div class="top"><b id="by"></b><button class="ghost" id="out">Log out</button></div>
+<div class="stats" id="stats"></div>
+<div id="reader"></div>
+<p id="camerr" style="color:#ffcc80;font-size:14px"></p>
+<div id="res"></div>
+<details style="margin-top:14px"><summary>QR not working or not received? Search by mobile number</summary>
+<div style="margin-top:10px"><input id="man" placeholder="10-digit mobile or ID (DDD-0012)" inputmode="text"><button class="ghost" id="manBtn">Search</button></div></details>
+</div>
+
+</div>
+<script>
+const API = "https://script.google.com/macros/s/AKfycbxQfS61dMBtKaN5u0fUSIjKoUJal3yvify81FbLkqQ-e-nkxSwu7CECIpR6OPeYP2Ppsw/exec";
+const $ = id => document.getElementById(id);
+let pw = "", busy = false, qr = null;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const call = async body => (await fetch(API, {method:"POST", body: JSON.stringify(Object.assign({pw}, body))})).json();
+
+function setStats(s) {
+  $("stats").textContent = `Entered: ${s.enteredPeople} people (${s.enteredRegs} registrations) · Verified: ${s.verified} of ${s.regs}`;
+}
+
+async function login(auto) {
+  $("lerr").textContent = "";
+  if (!auto) pw = $("pw").value.trim();
+  if (!pw) return;
+  $("loginBtn").disabled = true; $("loginBtn").textContent = "Checking…";
+  try {
+    const r = await call({action:"login"});
+    if (!r.ok) throw new Error(r.msg || "Login failed");
+    try { sessionStorage.setItem("pw", pw); } catch (e) {}
+    $("login").classList.add("hide"); $("app").classList.remove("hide");
+    $("by").textContent = "Logged in: " + r.by; setStats(r.stats); startCam();
+  } catch (e) {
+    $("lerr").textContent = e.message === "Wrong password" ? "Wrong password." : "Could not log in. Check internet and try again.";
+    try { sessionStorage.removeItem("pw"); } catch (x) {}
+  }
+  $("loginBtn").disabled = false; $("loginBtn").textContent = "Log in";
+}
+
+function startCam() {
+  if (qr) return;
+  qr = new Html5Qrcode("reader");
+  qr.start({facingMode:"environment"}, {fps:10, qrbox:{width:240, height:240}}, text => { if (!busy) { busy = true; check(text); } }, () => {})
+    .catch(() => { $("camerr").textContent = "Camera not available. Allow camera permission, or use manual entry below."; });
+}
+
+function show(cls, head, r, extra) {
+  const el = $("res"); el.className = cls; el.style.display = "block";
+  el.innerHTML = `<div class="big">${head}</div>` +
+    (r.name ? `<div class="name">${esc(r.name)} <small>(${esc(r.id)})</small></div>` : "") +
+    (r.items && r.items.length ? `<div class="items">${r.items.map(esc).join("<br>")}</div>` : "") +
+    (extra || "") + `<button class="ghost" id="next">Scan next</button>`;
+  $("next").onclick = () => { el.style.display = "none"; busy = false; };
+  if (navigator.vibrate) navigator.vibrate(cls === "ok" ? 80 : [150, 80, 150]);
+}
+
+async function check(code, lookup) {
+  code = String(code).trim();
+  if (!code) { busy = false; return; }
+  const el = $("res"); el.className = "warn"; el.style.display = "block"; el.textContent = "Checking…";
+  try {
+    const r = await call({action:"scan", code, lookup: !!lookup});
+    if (r.auth === false) { logout(); return; }
+    if (r.stats) setStats(r.stats);
+    if (r.result === "ok") show("ok", "✔ ALLOW ENTRY", r, `<div class="band">Wristbands: ${esc(r.people)}</div>`);
+    else if (r.result === "found") {
+      show("ok", "FOUND · NOT ENTERED YET", r, `<div class="band">Wristbands: ${esc(r.people)}</div><div>Check their name and ID proof, then confirm.</div><button id="enter">Confirm entry</button>`);
+      $("enter").onclick = () => { busy = true; check(r.id, false); };
+    }
+    else if (r.result === "used") show("bad", "✖ ALREADY ENTERED", r, `<div>Entered at ${esc(r.at)} (scanned by ${esc(r.by)})</div>`);
+    else if (r.result === "unverified") show("warn", "PAYMENT NOT VERIFIED", r, "<div>Do not allow entry. Send them to the organizers.</div>");
+    else show("bad", "✖ " + esc(r.msg || "Invalid QR code"), {}, "");
+  } catch (e) { show("bad", "Network error", {}, "<div>Check internet and scan again.</div>"); }
+}
+
+function logout() { try { sessionStorage.removeItem("pw"); } catch (e) {} location.reload(); }
+
+$("loginBtn").onclick = () => login(false);
+$("pw").addEventListener("keydown", e => { if (e.key === "Enter") login(false); });
+$("out").onclick = logout;
+$("manBtn").onclick = () => { const v = $("man").value.trim(); if (v && !busy) { busy = true; $("man").value = ""; check(v, true); } };
+try { pw = sessionStorage.getItem("pw") || ""; if (pw) login(true); } catch (e) {}
+</script></body></html>

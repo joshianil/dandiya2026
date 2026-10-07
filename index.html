@@ -6,8 +6,8 @@
 <style>
 :root{--plum:#3b1240;--wine:#a3203f;--gold:#ffd92e;--cream:#fff7e6;--ink:#2a1230}
 *{box-sizing:border-box}
-body{margin:0;font:15px/1.5 Poppins,system-ui,sans-serif;color:var(--ink);background:linear-gradient(#3b1240,#6b1646 40%,#a3203f);min-height:100vh;padding-bottom:40px}
-header{text-align:center;color:#fff;padding:26px 16px 14px}
+body{margin:0;font:15px/1.5 Poppins,system-ui,sans-serif;color:var(--ink);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23ffd92e' stroke-opacity='.13'%3E%3Ccircle cx='60' cy='60' r='8'/%3E%3Ccircle cx='60' cy='60' r='22'/%3E%3Ccircle cx='60' cy='60' r='38'/%3E%3Cpath d='M60 2v116M2 60h116M19 19l82 82M101 19L19 101'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(#3b1240,#6b1646 40%,#a3203f);min-height:100vh;padding-bottom:40px}
+header{text-align:center;color:#fff;padding:12px 16px 14px}
 header small{color:var(--gold);font:22px 'Rozha One',serif}
 h1{font:34px/1.1 'Rozha One',serif;margin:6px 0 10px;color:#fff}
 .meta{color:var(--gold);font-weight:500}.meta span{display:block}
@@ -34,11 +34,25 @@ input:focus,button:focus-visible{outline:3px solid var(--gold);border-color:var(
 .pay code{background:#f3e8d8;padding:2px 8px;border-radius:6px;user-select:all}
 .go{width:100%;margin-top:20px;padding:14px;border:0;border-radius:12px;background:linear-gradient(var(--gold),#f5b800);color:var(--plum);font:700 17px Poppins;cursor:pointer}
 .go:disabled{opacity:.6}
+.calls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;font-size:13px}
+.calls a{background:#ffffff1f;border:1px solid #ffd92e88;color:var(--gold);text-decoration:none;border-radius:20px;padding:6px 12px;font-weight:600}
+.hero{display:block;width:100%;max-width:480px;margin:6px auto -46px;-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
+header small{display:block}header small,h1,.meta,.note{position:relative}
+.req{color:#c62828}
+.map{width:100%;height:240px;border:0;border-radius:12px;margin-top:10px}
+.mapbtn{display:inline-block;margin-top:10px;background:var(--wine);color:#fff;text-decoration:none;border-radius:10px;padding:10px 18px;font-weight:600}
+footer a{color:var(--gold)}
+.terms{margin-top:18px;background:#fff;border-left:4px solid var(--wine);border-radius:10px;padding:10px 14px;font-size:13px}
+.terms ul{margin:6px 0 8px;padding-left:18px}
+.terms .chk{display:flex;gap:8px;align-items:flex-start;font-weight:500;margin:0}
+.terms .chk input{width:18px;height:18px;margin-top:2px;accent-color:var(--wine)}
 .hp{position:absolute;left:-9999px}
 .done{text-align:center}.done .id{font:34px 'Rozha One',serif;color:var(--wine);background:#fff;border-radius:12px;padding:10px;margin:12px 0}
 footer{text-align:center;color:#fff;font-size:13px;margin-top:18px;padding:0 12px}
 </style></head><body>
 <header>
+<div class="calls">Call us:<a href="tel:6362431123">6362431123</a><a href="tel:9611840164">9611840164</a><a href="tel:8088062859">8088062859</a></div>
+<img class="hero" src="hero.jpg" alt="Dandiya dancers">
 <small>Onestage Creation's presents</small>
 <h1>Dharwad's Dandiya Darbar</h1>
 <div class="meta"><span>Sat, 17 Oct 2026 · 5:30 pm onwards</span><span>Yeligar Sports Arena, Tapovan Nagar, Dharwad</span></div>
@@ -47,9 +61,9 @@ footer{text-align:center;color:#fff;font-size:13px;margin-top:18px;padding:0 12p
 
 <form id="f" novalidate>
 <h2>Your details</h2>
-<label for="name">Full name</label><input id="name" type="text" autocomplete="name">
-<label for="email">Email address</label><input id="email" type="email" autocomplete="email">
-<label for="mobile">Mobile number</label><input id="mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit number" autocomplete="tel">
+<label for="name">Full name <span class="req">*</span></label><input id="name" type="text" autocomplete="name">
+<label for="email">Email address <span class="req">*</span></label><input id="email" type="email" autocomplete="email">
+<label for="mobile">Mobile number <span class="req">*</span></label><input id="mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit number" autocomplete="tel">
 <input class="hp" id="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
 
 <h2>Choose tickets</h2>
@@ -73,20 +87,28 @@ footer{text-align:center;color:#fff;font-size:13px;margin-top:18px;padding:0 12p
 <a id="upi" href="#">Pay with UPI app</a>
 </div>
 
-<label for="utr">UTR / transaction ID (12 digits)</label>
+<label for="utr">UTR / transaction ID (12 digits) <span class="req">*</span></label>
 <input id="utr" type="text" inputmode="numeric" maxlength="12" placeholder="e.g. 412345678901">
-<label for="shot">Payment screenshot</label>
-<input id="shot" type="file" accept="image/*">
+<label for="shot">Payment screenshot <span class="req">*</span></label>
+<input id="shot" type="file" accept="image/*" required>
+
+<div class="terms"><b>Terms and conditions apply</b>
+<ul><li>The organizers hold the authority to cancel any registration.</li>
+<li>Any participant who misbehaves will be sent out of the event by the organizers.</li></ul>
+<label class="chk"><input type="checkbox" id="agree"> I have read and agree to the terms and conditions</label></div>
 <div class="msg bad" id="err"></div>
 <button class="go" id="go" type="submit">Submit registration</button>
 </form>
 
-<footer>Need help? 6362431123 · 9611840164 · 8088062859</footer>
+<footer>Need help? <a href="tel:6362431123">6362431123</a> · <a href="tel:9611840164">9611840164</a> · <a href="tel:8088062859">8088062859</a></footer>
 
 <script>
 // ====== SETTINGS ======
-const API = "https://script.google.com/macros/s/AKfycbxzzdgXQulp1XHBdpDWt29-K_MTNCRv-hAyxZGkD98gPorrNqJEDRwBowAD52ZUVnAi3w/exec";
+const API = "https://script.google.com/macros/s/AKfycbxzzdgXQulp1XHBdpDWt29-K_MTNCRv-hAyxZGkD98gPorrNqJEDRwBowAD52ZUVnAi3w/exec";             
 const UPI = "8088062859@kotakbank", PAYEE = "Onestage Creation";
+// Paste your exact Google Maps links here (see instructions)
+const MAP_EMBED = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3845.7274055432913!2d74.96845507617921!3d15.445257155837668!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb8d3007b85fcbb%3A0x8f219ee1bbbb77f8!2sYeligar%20Sports%20Arena!5e0!3m2!1sen!2sin!4v1791405801277!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin";
+const MAP_LINK = "https://maps.app.goo.gl/sVKpnG6FhphpsC2A8";
 const TICKETS = [
   {k:"stag", n:"Stag", d:"1 person", p:399},
   {k:"couple", n:"Couple", d:"2 people", p:699},
@@ -160,7 +182,8 @@ $("f").addEventListener("submit", async e => {
   if (!/^[6-9]\d{9}$/.test(mobile)) return err.textContent = "Enter a valid 10-digit mobile number.";
   if (!total) return err.textContent = "Select at least one ticket.";
   if (!/^\d{12}$/.test(utr)) return err.textContent = "UTR must be exactly 12 digits.";
-  if (!file) return err.textContent = "Upload your payment screenshot.";
+  if (!file) return err.textContent = "Payment screenshot is required. Please upload it.";
+  if (!$("agree").checked) return err.textContent = "Please accept the terms and conditions.";
   go.disabled = true; go.textContent = "Submitting… please wait";
   try {
     const shot = await compress(file);
@@ -168,8 +191,11 @@ $("f").addEventListener("submit", async e => {
       name, email, mobile, utr, qty, coupon: coupon ? coupon.code : ($("coupon").value.trim().toUpperCase()),
       expected: total, shot, website: $("website").value })})).json();
     if (!r.ok) throw new Error(r.msg);
-    $("f").innerHTML = `<div class="done"><h2>You're registered!</h2><p>Your registration ID</p><div class="id">${r.id}</div>
-      <p>Amount: <b>${inr(r.amount)}</b><br>Please take a screenshot of this ID and show it at the entry. Your payment will be verified by our team.</p></div>`;
+    $("f").innerHTML = `<div class="done"><h2>Thank you for registering!</h2><p><b>See you at the venue.</b></p>
+      <p>Registration ID: <b>${r.id}</b> · Amount: <b>${inr(r.amount)}</b></p>
+      <p>Once your payment is verified, your entry QR code will be sent to your WhatsApp number ${mobile}. Show it at the gate.</p>
+      <iframe class="map" src="${MAP_EMBED}" loading="lazy" allowfullscreen></iframe>
+      <a class="mapbtn" href="${MAP_LINK}" target="_blank" rel="noopener">Open in Google Maps</a></div>`;
     scrollTo({top:0, behavior:"smooth"});
   } catch (x) {
     err.textContent = x.message && x.message.length < 200 ? x.message : "Could not submit. Check your internet and try again.";

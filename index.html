@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dharwad's Dandiya Darbar – Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--plum:#3b1240;--wine:#a3203f;--gold:#ffd92e;--cream:#fff7e6;--ink:#2a1230}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 Poppins,system-ui,sans-serif;color:var(--ink);background:linear-gradient(#3b1240,#6b1646 40%,#a3203f);min-height:100vh;padding-bottom:40px}
+header{text-align:center;color:#fff;padding:26px 16px 14px}
+header small{color:var(--gold);font:22px 'Rozha One',serif}
+h1{font:34px/1.1 'Rozha One',serif;margin:6px 0 10px;color:#fff}
+.meta{color:var(--gold);font-weight:500}.meta span{display:block}
+.note{display:inline-block;background:var(--gold);color:var(--plum);border-radius:20px;padding:3px 14px;font-weight:600;font-size:13px;margin-top:10px}
+form{max-width:520px;margin:0 auto;background:var(--cream);border-radius:18px;padding:20px;box-shadow:0 10px 40px #0006;margin-inline:auto;width:calc(100% - 24px)}
+h2{font:20px 'Rozha One',serif;margin:22px 0 10px;color:var(--wine)}h2:first-child{margin-top:0}
+label{display:block;font-weight:500;margin:12px 0 4px}
+input[type=text],input[type=email],input[type=tel],input[type=file]{width:100%;padding:11px;border:1.5px solid #d9c3b0;border-radius:10px;font:inherit;background:#fff}
+input:focus,button:focus-visible{outline:3px solid var(--gold);border-color:var(--wine)}
+.tk{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed #d9c3b0}
+.tk b{display:block}.tk em{font-style:normal;color:var(--wine);font-weight:600}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:34px;height:34px;border-radius:50%;border:0;background:var(--wine);color:#fff;font-size:20px;cursor:pointer}
+.qty output{min-width:22px;text-align:center;font-weight:600}
+.row{display:flex;gap:8px}.row input{flex:1}
+.btn2{border:0;background:var(--plum);color:#fff;border-radius:10px;padding:0 18px;font:600 14px Poppins;cursor:pointer}
+.msg{font-size:13px;margin-top:5px;min-height:18px}.ok{color:#17803d}.bad{color:#b3261e}
+.sum{background:#fff;border-radius:12px;padding:12px 14px;margin-top:14px}
+.sum div{display:flex;justify-content:space-between}.sum .t{font-weight:600;font-size:19px;color:var(--wine);border-top:1px solid #eadccd;margin-top:6px;padding-top:6px}
+.pay{text-align:center;background:#fff;border-radius:12px;padding:14px}
+.pay img{width:220px;max-width:70%;border-radius:10px}
+.pay .amt{font:28px 'Rozha One',serif;color:var(--wine)}
+.pay a{display:inline-block;margin-top:8px;background:var(--wine);color:#fff;text-decoration:none;border-radius:10px;padding:9px 18px;font-weight:600}
+.pay code{background:#f3e8d8;padding:2px 8px;border-radius:6px;user-select:all}
+.go{width:100%;margin-top:20px;padding:14px;border:0;border-radius:12px;background:linear-gradient(var(--gold),#f5b800);color:var(--plum);font:700 17px Poppins;cursor:pointer}
+.go:disabled{opacity:.6}
+.hp{position:absolute;left:-9999px}
+.done{text-align:center}.done .id{font:34px 'Rozha One',serif;color:var(--wine);background:#fff;border-radius:12px;padding:10px;margin:12px 0}
+footer{text-align:center;color:#fff;font-size:13px;margin-top:18px;padding:0 12px}
+</style></head><body>
+<header>
+<small>Onestage Creation's presents</small>
+<h1>Dharwad's Dandiya Darbar</h1>
+<div class="meta"><span>Sat, 17 Oct 2026 · 5:30 pm onwards</span><span>Yeligar Sports Arena, Tapovan Nagar, Dharwad</span></div>
+<div class="note">Free sticks · Entry by registration only</div>
+</header>
+
+<form id="f" novalidate>
+<h2>Your details</h2>
+<label for="name">Full name</label><input id="name" type="text" autocomplete="name">
+<label for="email">Email address</label><input id="email" type="email" autocomplete="email">
+<label for="mobile">Mobile number</label><input id="mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit number" autocomplete="tel">
+<input class="hp" id="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+<h2>Choose tickets</h2>
+<div id="tickets"></div>
+
+<h2>Coupon code (optional)</h2>
+<div class="row"><input id="coupon" type="text" placeholder="Enter code" autocapitalize="characters"><button type="button" class="btn2" id="apply">Apply</button></div>
+<div class="msg" id="cmsg"></div>
+
+<div class="sum">
+<div><span>Subtotal</span><span id="sub">₹0</span></div>
+<div id="drow" style="display:none"><span>Discount</span><span id="disc"></span></div>
+<div class="t"><span>Amount to pay</span><span id="tot">₹0</span></div>
+</div>
+
+<h2>Make payment</h2>
+<div class="pay">
+<div>Pay exactly</div><div class="amt" id="amt2">₹0</div>
+<img src="qr.png" alt="UPI payment QR code">
+<div>UPI ID: <code>8088062859@kotakbank</code></div>
+<a id="upi" href="#">Pay with UPI app</a>
+</div>
+
+<label for="utr">UTR / transaction ID (12 digits)</label>
+<input id="utr" type="text" inputmode="numeric" maxlength="12" placeholder="e.g. 412345678901">
+<label for="shot">Payment screenshot</label>
+<input id="shot" type="file" accept="image/*">
+<div class="msg bad" id="err"></div>
+<button class="go" id="go" type="submit">Submit registration</button>
+</form>
+
+<footer>Need help? 6362431123 · 9611840164 · 8088062859</footer>
+
+<script>
+// ====== SETTINGS ======
+const API = "https://script.google.com/macros/s/AKfycbxzzdgXQulp1XHBdpDWt29-K_MTNCRv-hAyxZGkD98gPorrNqJEDRwBowAD52ZUVnAi3w/exec";
+const UPI = "8088062859@kotakbank", PAYEE = "Onestage Creation";
+const TICKETS = [
+  {k:"stag", n:"Stag", d:"1 person", p:399},
+  {k:"couple", n:"Couple", d:"2 people", p:699},
+  {k:"group", n:"Group of 5", d:"5 people", p:1699},
+  {k:"kids", n:"Kids", d:"Above 6 and below 14 years", p:199}
+];
+// ======================
+const $ = id => document.getElementById(id);
+const qty = {stag:0, couple:0, group:0, kids:0};
+let coupon = null; // {code,type,value}
+const inr = n => "₹" + n.toLocaleString("en-IN");
+
+$("tickets").innerHTML = TICKETS.map(t => `<div class="tk"><div><b>${t.n}</b><small>${t.d}</small> · <em>${inr(t.p)}</em></div>
+<div class="qty"><button type="button" data-k="${t.k}" data-d="-1" aria-label="Remove ${t.n}">−</button><output id="q-${t.k}">0</output><button type="button" data-k="${t.k}" data-d="1" aria-label="Add ${t.n}">+</button></div></div>`).join("");
+
+$("tickets").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const k = b.dataset.k; qty[k] = Math.max(0, Math.min(20, qty[k] + +b.dataset.d));
+  $("q-" + k).textContent = qty[k]; calc();
+});
+
+function calc() {
+  const sub = TICKETS.reduce((s, t) => s + t.p * qty[t.k], 0);
+  let disc = 0;
+  if (coupon && sub) disc = coupon.type === "percent" ? Math.round(sub * coupon.value / 100) : Math.min(coupon.value, sub);
+  const tot = sub - disc;
+  $("sub").textContent = inr(sub); $("disc").textContent = "− " + inr(disc);
+  $("drow").style.display = disc ? "flex" : "none";
+  $("tot").textContent = $("amt2").textContent = inr(tot);
+  $("upi").href = `upi://pay?pa=${UPI}&pn=${encodeURIComponent(PAYEE)}&am=${tot}&cu=INR&tn=Dandiya`;
+  $("upi").style.display = tot ? "inline-block" : "none";
+  return tot;
+}
+
+$("coupon").addEventListener("input", () => { coupon = null; $("cmsg").textContent = ""; calc(); });
+$("apply").onclick = async () => {
+  const code = $("coupon").value.trim().toUpperCase(), m = $("cmsg");
+  if (!code) { m.textContent = ""; return; }
+  $("apply").disabled = true; m.className = "msg"; m.textContent = "Checking…";
+  try {
+    const r = await (await fetch(API + "?action=coupon&code=" + encodeURIComponent(code))).json();
+    if (r.valid) { coupon = {code, type:r.type, value:+r.value}; m.className = "msg ok"; m.textContent = "Coupon applied: " + (r.type === "percent" ? r.value + "% off" : inr(+r.value) + " off"); }
+    else { coupon = null; m.className = "msg bad"; m.textContent = "Invalid code. Regular prices apply, you can still register."; }
+  } catch (e) { coupon = null; m.className = "msg bad"; m.textContent = "Could not check the code. Regular prices apply."; }
+  $("apply").disabled = false; calc();
+};
+
+function compress(file) {
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const s = Math.min(1, 1100 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+      c.width = img.width * s; c.height = img.height * s;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", .72).split(",")[1]);
+    };
+    img.onerror = () => rej(); img.src = url;
+  });
+}
+
+$("mobile").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, ""));
+$("utr").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, ""));
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const err = $("err"), go = $("go"); err.textContent = "";
+  const name = $("name").value.trim(), email = $("email").value.trim(), mobile = $("mobile").value, utr = $("utr").value, file = $("shot").files[0];
+  const total = calc();
+  if (name.length < 2) return err.textContent = "Enter your full name.";
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = "Enter a valid email address.";
+  if (!/^[6-9]\d{9}$/.test(mobile)) return err.textContent = "Enter a valid 10-digit mobile number.";
+  if (!total) return err.textContent = "Select at least one ticket.";
+  if (!/^\d{12}$/.test(utr)) return err.textContent = "UTR must be exactly 12 digits.";
+  if (!file) return err.textContent = "Upload your payment screenshot.";
+  go.disabled = true; go.textContent = "Submitting… please wait";
+  try {
+    const shot = await compress(file);
+    const r = await (await fetch(API, {method:"POST", body: JSON.stringify({
+      name, email, mobile, utr, qty, coupon: coupon ? coupon.code : ($("coupon").value.trim().toUpperCase()),
+      expected: total, shot, website: $("website").value })})).json();
+    if (!r.ok) throw new Error(r.msg);
+    $("f").innerHTML = `<div class="done"><h2>You're registered!</h2><p>Your registration ID</p><div class="id">${r.id}</div>
+      <p>Amount: <b>${inr(r.amount)}</b><br>Please take a screenshot of this ID and show it at the entry. Your payment will be verified by our team.</p></div>`;
+    scrollTo({top:0, behavior:"smooth"});
+  } catch (x) {
+    err.textContent = x.message && x.message.length < 200 ? x.message : "Could not submit. Check your internet and try again.";
+    go.disabled = false; go.textContent = "Submit registration";
+  }
+});
+calc();
+</script>
+</body></html>

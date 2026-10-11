@@ -44,6 +44,7 @@ header small{display:block}header small,h1,.meta,.note{position:relative}
 footer a{color:var(--gold)}
 .terms{margin-top:18px;background:#fff;border-left:4px solid var(--wine);border-radius:10px;padding:10px 14px;font-size:13px}
 .terms ul{margin:6px 0 8px;padding-left:18px}
+.terms a{color:var(--wine);font-weight:600}
 .terms .chk{display:flex;gap:8px;align-items:flex-start;font-weight:500;margin:0}
 .terms .chk input{width:18px;height:18px;margin-top:2px;accent-color:var(--wine)}
 .hp{position:absolute;left:-9999px}
@@ -76,6 +77,7 @@ footer{text-align:center;color:#fff;font-size:13px;margin-top:18px;padding:0 12p
 <div class="sum">
 <div><span>Subtotal</span><span id="sub">₹0</span></div>
 <div id="drow" style="display:none"><span>Discount</span><span id="disc"></span></div>
+<div id="frow" style="display:none"><span>Free tickets</span><span id="free"></span></div>
 <div class="t"><span>Amount to pay</span><span id="tot">₹0</span></div>
 </div>
 
@@ -132,11 +134,16 @@ $("tickets").addEventListener("click", e => {
 
 function calc() {
   const sub = TICKETS.reduce((s, t) => s + t.p * qty[t.k], 0);
-  let disc = 0;
-  if (coupon && sub) disc = coupon.type === "percent" ? Math.round(sub * coupon.value / 100) : Math.min(coupon.value, sub);
+  let disc = 0, free = 0;
+  if (coupon && coupon.type === "freegroup") {
+    free = Math.floor(qty.group * coupon.value);
+    const m = $("cmsg"); m.className = "msg " + (free ? "ok" : "bad");
+    m.textContent = free ? `Coupon applied: you get ${free} free ticket${free > 1 ? "s" : ""}!` : "This code works only with Group of 5 tickets. Add one to get free tickets.";
+  } else if (coupon && sub) disc = coupon.type === "percent" ? Math.round(sub * coupon.value / 100) : Math.min(coupon.value, sub);
   const tot = sub - disc;
   $("sub").textContent = inr(sub); $("disc").textContent = "− " + inr(disc);
   $("drow").style.display = disc ? "flex" : "none";
+  $("frow").style.display = free ? "flex" : "none"; $("free").textContent = "+ " + free + " free";
   $("tot").textContent = $("amt2").textContent = inr(tot);
   $("upi").href = `upi://pay?pa=${UPI}&pn=${encodeURIComponent(PAYEE)}&am=${tot}&cu=INR&tn=Dandiya`;
   $("upi").style.display = tot ? "inline-block" : "none";
@@ -150,7 +157,7 @@ $("apply").onclick = async () => {
   $("apply").disabled = true; m.className = "msg"; m.textContent = "Checking…";
   try {
     const r = await (await fetch(API + "?action=coupon&code=" + encodeURIComponent(code))).json();
-    if (r.valid) { coupon = {code, type:r.type, value:+r.value}; m.className = "msg ok"; m.textContent = "Coupon applied: " + (r.type === "percent" ? r.value + "% off" : inr(+r.value) + " off"); }
+    if (r.valid) { coupon = {code, type:r.type, value:+r.value}; m.className = "msg ok"; m.textContent = "Coupon applied: " + (r.type === "percent" ? r.value + "% off" : r.type === "freegroup" ? "" : inr(+r.value) + " off"); }
     else { coupon = null; m.className = "msg bad"; m.textContent = "Invalid code. Regular prices apply, you can still register."; }
   } catch (e) { coupon = null; m.className = "msg bad"; m.textContent = "Could not check the code. Regular prices apply."; }
   $("apply").disabled = false; calc();
@@ -193,6 +200,7 @@ $("f").addEventListener("submit", async e => {
     if (!r.ok) throw new Error(r.msg);
     $("f").innerHTML = `<div class="done"><h2>Thank you for registering!</h2><p><b>See you at the venue.</b></p>
       <p>Registration ID: <b>${r.id}</b> · Amount: <b>${inr(r.amount)}</b></p>
+      ${r.free ? `<p>Free tickets included: <b>${r.free}</b></p>` : ""}
       <p>Once your payment is verified, your entry QR code will be sent to your WhatsApp number ${mobile}. Show it at the gate.</p>
       <iframe class="map" src="${MAP_EMBED}" loading="lazy" allowfullscreen></iframe>
       <a class="mapbtn" href="${MAP_LINK}" target="_blank" rel="noopener">Open in Google Maps</a></div>`;

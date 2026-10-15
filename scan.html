@@ -48,12 +48,101 @@ button.ghost{background:#ffffff26;color:#fff;font-weight:500}
 <script>
 const API = "https://script.google.com/macros/s/AKfycbx8b8HUdDGelOcGztFRF9HBn897lS8q_T5f6T3VKQ98_L-kiOGVjsNbGRlJg2uC0V0Aqg/exec";
 const $ = id => document.getElementById(id);
-let pw = "", busy = false, qr = null;
+let pw = "", busy = false, qr = null, refreshTimer = null, refreshing = false;
+let roster = [], byId = new Map(), byMobile = new Map();
+let seenCode = "", seenAt = 0;
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const call = async body => (await fetch(API, {method:"POST", body: JSON.stringify(Object.assign({pw}, body))})).json();
 
+// Roster rows are [id, mobile, name, stag, couple, group, kids, free, verified, entered, atMillis, by]
+function indexRoster(list) {
+  roster = (list || []).map(a => ({
+    id: String(a[0] || ""),
+    mobile: String(a[1] || "").replace(/\D/g, "").slice(-10),
+    name: String(a[2] || ""),
+    stag: +a[3] || 0,
+    couple: +a[4] || 0,
+    group: +a[5] || 0,
+    kids: +a[6] || 0,
+    free: +a[7] || 0,
+    verified: !!a[8],
+    entered: !!a[9],
+    at: +a[10] || 0,
+    by: String(a[11] || "")
+  }));
+  byId = new Map();
+  byMobile = new Map();
+  roster.forEach(r => {
+    const id = r.id.toUpperCase();
+    if (id && !byId.has(id)) byId.set(id, r);
+    if (r.mobile && !byMobile.has(r.mobile)) byMobile.set(r.mobile, r);
+  });
+}
+
+function peopleCount(r) { return r.stag + r.couple * 2 + r.group * 5 + r.kids + r.free; }
+function itemList(r) {
+  const items = [];
+  if (r.stag) items.push("Stag × " + r.stag);
+  if (r.couple) items.push("Couple × " + r.couple);
+  if (r.group) items.push("Group of 5 × " + r.group);
+  if (r.kids) items.push("Kids × " + r.kids);
+  if (r.free) items.push("Free Stag × " + r.free);
+  return items;
+}
+function countStats() {
+  let verified = 0, enteredRegs = 0, enteredPeople = 0;
+  roster.forEach(r => {
+    if (r.verified) verified++;
+    if (r.entered) { enteredRegs++; enteredPeople += peopleCount(r); }
+  });
+  return {regs: roster.length, verified, enteredRegs, enteredPeople};
+}
+function formatAt(ms) {
+  if (!ms) return "";
+  try { return new Date(ms).toLocaleTimeString("en-IN", {hour:"numeric", minute:"2-digit", hour12:true, timeZone:"Asia/Kolkata"}); }
+  catch (e) { return ""; }
+}
 function setStats(s) {
+  if (!s) return;
   $("stats").textContent = `Entered: ${s.enteredPeople} people (${s.enteredRegs} registrations) · Verified: ${s.verified} of ${s.regs}`;
+}
+function normalizeLookup(code) {
+  const compact = String(code || "").trim().replace(/\s+/g, "");
+  if (/^DDD-\d+$/i.test(compact)) return compact.toUpperCase();
+  const digits = compact.replace(/\D/g, "");
+  if (/^\d{10,13}$/.test(digits) && !/[a-z]/i.test(compact)) return digits.slice(-10);
+  return String(code || "").trim();
+}
+function localLookup(code) {
+  const compact = String(code || "").trim();
+  let rec = null;
+  if (/^DDD-\d+$/i.test(compact)) rec = byId.get(compact.toUpperCase());
+  else if (/^\d{10}$/.test(compact)) rec = byMobile.get(compact);
+  else rec = byId.get(compact.toUpperCase());
+  if (!rec) return null;
+  const view = {ok:true, id:rec.id, name:rec.name, people:peopleCount(rec), items:itemList(rec), stats:countStats()};
+  if (!rec.verified) view.result = "unverified";
+  else if (rec.entered) { view.result = "used"; view.at = formatAt(rec.at); view.by = rec.by; }
+  else view.result = "found";
+  return view;
+}
+function previewRec(code) {
+  const raw = String(code || "").trim();
+  const id = (raw.indexOf(".") > -1 ? raw.split(".")[0] : raw).toUpperCase();
+  return byId.get(id) || null;
+}
+function rememberScan(r) {
+  if (!r || !r.id) return;
+  const rec = byId.get(String(r.id).toUpperCase());
+  if (!rec) return;
+  if (r.result === "ok" || r.result === "used") {
+    rec.entered = true;
+    if (r.result === "ok") rec.at = Date.now();
+    if (r.by) rec.by = r.by;
+    rec.verified = true;
+  }
+  if (r.result === "found") rec.verified = true;
+  if (r.result === "unverified") rec.verified = false;
 }
 
 async function login(auto) {
@@ -66,7 +155,10 @@ async function login(auto) {
     if (!r.ok) throw new Error(r.msg || "Login failed");
     try { sessionStorage.setItem("pw", pw); } catch (e) {}
     $("login").classList.add("hide"); $("app").classList.remove("hide");
-    $("by").textContent = "Logged in: " + r.by; setStats(r.stats); startCam();
+    $("by").textContent = "Logged in: " + r.by;
+    if (r.roster) { indexRoster(r.roster); startRosterRefresh(); }
+    setStats(r.stats || (roster.length ? countStats() : null));
+    startCam();
   } catch (e) {
     $("lerr").textContent = e.message === "Wrong password" ? "Wrong password." : "Could not log in. Check internet and try again.";
     try { sessionStorage.removeItem("pw"); } catch (x) {}
@@ -74,11 +166,62 @@ async function login(auto) {
   $("loginBtn").disabled = false; $("loginBtn").textContent = "Log in";
 }
 
+async function refreshRoster(fresh) {
+  if (!pw || refreshing) return;
+  refreshing = true;
+  try {
+    const r = await call({action:"roster", fresh: !!fresh});
+    if (r && r.auth !== false && r.roster) indexRoster(r.roster);
+    if (r && r.stats) setStats(r.stats);
+  } catch (e) {}
+  refreshing = false;
+}
+function startRosterRefresh() {
+  if (refreshTimer) return;
+  refreshTimer = setInterval(() => refreshRoster(false), 20000);
+}
+
+function pauseCam() { try { if (qr && qr.pause) qr.pause(true); } catch (e) {} }
+function resumeCam() { try { if (qr && qr.resume) qr.resume(); } catch (e) {} }
+function sameBurst(text) {
+  const now = Date.now();
+  if (text === seenCode && now - seenAt < 6000) return true;
+  seenCode = text; seenAt = now;
+  return false;
+}
+function makeScanner() {
+  const base = {useBarCodeDetectorIfSupported: true};
+  if (typeof Html5QrcodeSupportedFormats !== "undefined") base.formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
+  try { return new Html5Qrcode("reader", base); }
+  catch (e) { return new Html5Qrcode("reader", {useBarCodeDetectorIfSupported: true}); }
+}
 function startCam() {
   if (qr) return;
-  qr = new Html5Qrcode("reader");
-  qr.start({facingMode:"environment"}, {fps:10, qrbox:{width:240, height:240}}, text => { if (!busy) { busy = true; check(text); } }, () => {})
-    .catch(() => { $("camerr").textContent = "Camera not available. Allow camera permission, or use manual entry below."; });
+  let scanner;
+  try { scanner = makeScanner(); }
+  catch (e) { $("camerr").textContent = "Camera not available. Allow camera permission, or use manual entry below."; return; }
+  qr = scanner;
+  const config = {
+    fps: 8,
+    disableFlip: true,
+    qrbox: (w, h) => {
+      const edge = Math.floor(Math.min(w, h) * 0.72);
+      return {width: edge, height: edge};
+    }
+  };
+  const onScan = text => { if (!busy && !sameBurst(text)) { busy = true; check(text); } };
+  const giveUp = () => { $("camerr").textContent = "Camera not available. Allow camera permission, or use manual entry below."; };
+  const plain = () => qr.start({facingMode:"environment"}, config, onScan, () => {}).catch(giveUp);
+  try {
+    qr.start({
+      facingMode: "environment",
+      width: {ideal: 1280},
+      height: {ideal: 720},
+      advanced: [{focusMode: "continuous"}]
+    }, config, onScan, () => {}).catch(plain);
+  } catch (e) {
+    try { plain(); } catch (e2) { giveUp(); }
+  }
 }
 
 function show(cls, head, r, extra) {
@@ -87,27 +230,46 @@ function show(cls, head, r, extra) {
     (r.name ? `<div class="name">${esc(r.name)} <small>(${esc(r.id)})</small></div>` : "") +
     (r.items && r.items.length ? `<div class="items">${r.items.map(esc).join("<br>")}</div>` : "") +
     (extra || "") + `<button class="ghost" id="next">Scan next</button>`;
-  $("next").onclick = () => { el.style.display = "none"; busy = false; };
+  $("next").onclick = () => { el.style.display = "none"; busy = false; resumeCam(); };
   if (navigator.vibrate) navigator.vibrate(cls === "ok" ? 80 : [150, 80, 150]);
+}
+
+function applyScanResult(r) {
+  if (r.auth === false) { logout(); return; }
+  if (r.stats) setStats(r.stats);
+  rememberScan(r);
+  if (r.result === "ok") show("ok", "✔ ALLOW ENTRY", r, `<div class="band">Wristbands: ${esc(r.people)}</div>`);
+  else if (r.result === "found") {
+    show("ok", "FOUND · NOT ENTERED YET", r, `<div class="band">Wristbands: ${esc(r.people)}</div><div>Check their name and ID proof, then confirm.</div><button id="enter">Confirm entry</button>`);
+    $("enter").onclick = () => { busy = true; check(r.id, false); };
+  }
+  else if (r.result === "used") show("bad", "✖ ALREADY ENTERED", r, `<div>Entered${r.at ? " at " + esc(r.at) : ""}${r.by ? " (scanned by " + esc(r.by) + ")" : ""}</div>`);
+  else if (r.result === "unverified") show("warn", "PAYMENT NOT VERIFIED", r, "<div>Do not allow entry. Send them to the organizers.</div>");
+  else show("bad", "✖ " + esc(r.msg || "Invalid QR code"), r || {}, "");
 }
 
 async function check(code, lookup) {
   code = String(code).trim();
-  if (!code) { busy = false; return; }
-  const el = $("res"); el.className = "warn"; el.style.display = "block"; el.textContent = "Checking…";
+  if (lookup) code = normalizeLookup(code);
+  if (!code) { busy = false; resumeCam(); return; }
+  pauseCam();
+  if (lookup && roster.length) {
+    const local = localLookup(code);
+    if (local && local.result !== "unverified") { applyScanResult(local); return; }
+  }
+  const el = $("res");
+  const rec = previewRec(code);
+  el.className = "warn"; el.style.display = "block";
+  const n = rec ? peopleCount(rec) : 0;
+  el.textContent = rec ? ("Checking… " + rec.name + " · " + n + " wristband" + (n === 1 ? "" : "s")) : "Checking…";
   try {
     const r = await call({action:"scan", code, lookup: !!lookup});
-    if (r.auth === false) { logout(); return; }
-    if (r.stats) setStats(r.stats);
-    if (r.result === "ok") show("ok", "✔ ALLOW ENTRY", r, `<div class="band">Wristbands: ${esc(r.people)}</div>`);
-    else if (r.result === "found") {
-      show("ok", "FOUND · NOT ENTERED YET", r, `<div class="band">Wristbands: ${esc(r.people)}</div><div>Check their name and ID proof, then confirm.</div><button id="enter">Confirm entry</button>`);
-      $("enter").onclick = () => { busy = true; check(r.id, false); };
-    }
-    else if (r.result === "used") show("bad", "✖ ALREADY ENTERED", r, `<div>Entered at ${esc(r.at)} (scanned by ${esc(r.by)})</div>`);
-    else if (r.result === "unverified") show("warn", "PAYMENT NOT VERIFIED", r, "<div>Do not allow entry. Send them to the organizers.</div>");
-    else show("bad", "✖ " + esc(r.msg || "Invalid QR code"), {}, "");
-  } catch (e) { show("bad", "Network error", {}, "<div>Check internet and scan again.</div>"); }
+    applyScanResult(r);
+    if (r && r.result === "invalid") refreshRoster(true);
+  } catch (e) {
+    seenCode = "";
+    show("bad", "Network error", {}, "<div>Check internet and scan again.</div>");
+  }
 }
 
 function logout() { try { sessionStorage.removeItem("pw"); } catch (e) {} location.reload(); }

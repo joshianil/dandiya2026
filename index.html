@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dharwad's Dandiya Darbar – Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--plum:#3b1240;--wine:#a3203f;--gold:#ffd92e;--cream:#fff7e6;--ink:#2a1230}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 Poppins,system-ui,sans-serif;color:var(--ink);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23ffd92e' stroke-opacity='.13'%3E%3Ccircle cx='60' cy='60' r='8'/%3E%3Ccircle cx='60' cy='60' r='22'/%3E%3Ccircle cx='60' cy='60' r='38'/%3E%3Cpath d='M60 2v116M2 60h116M19 19l82 82M101 19L19 101'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(#3b1240,#6b1646 40%,#a3203f);min-height:100vh;padding-bottom:40px}
+header{text-align:center;color:#fff;padding:12px 16px 14px}
+header small{color:var(--gold);font:22px 'Rozha One',serif}
+h1{font:34px/1.1 'Rozha One',serif;margin:6px 0 10px;color:#fff}
+.meta{color:var(--gold);font-weight:500}.meta span{display:block}
+.note{display:inline-block;background:var(--gold);color:var(--plum);border-radius:20px;padding:6px 16px;font-weight:600;font-size:16px;margin-top:10px}
+form{max-width:520px;margin:0 auto;background:var(--cream);border-radius:18px;padding:20px;box-shadow:0 10px 40px #0006;margin-inline:auto;width:calc(100% - 24px)}
+h2{font:20px 'Rozha One',serif;margin:22px 0 10px;color:var(--wine)}h2:first-child{margin-top:0}
+label{display:block;font-weight:500;margin:12px 0 4px}
+input[type=text],input[type=email],input[type=tel],input[type=file]{width:100%;padding:11px;border:1.5px solid #d9c3b0;border-radius:10px;font:inherit;background:#fff}
+input:focus,button:focus-visible{outline:3px solid var(--gold);border-color:var(--wine)}
+.tk{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed #d9c3b0}
+.tk b{display:block}.tk em{font-style:normal;color:var(--wine);font-weight:600}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:34px;height:34px;border-radius:50%;border:0;background:var(--wine);color:#fff;font-size:20px;cursor:pointer}
+.qty output{min-width:22px;text-align:center;font-weight:600}
+.row{display:flex;gap:8px}.row input{flex:1}
+.btn2{border:0;background:var(--plum);color:#fff;border-radius:10px;padding:0 18px;font:600 14px Poppins;cursor:pointer}
+.msg{font-size:13px;margin-top:5px;min-height:18px}.ok{color:#17803d}.bad{color:#b3261e}
+.sum{background:#fff;border-radius:12px;padding:12px 14px;margin-top:14px}
+.sum div{display:flex;justify-content:space-between}.sum .t{font-weight:600;font-size:19px;color:var(--wine);border-top:1px solid #eadccd;margin-top:6px;padding-top:6px}
+.pay{text-align:center;background:#fff;border-radius:12px;padding:14px}
+.pay img{width:220px;max-width:70%;border-radius:10px}
+.pay .amt{font:28px 'Rozha One',serif;color:var(--wine)}
+.pay a{display:inline-block;margin-top:8px;background:var(--wine);color:#fff;text-decoration:none;border-radius:10px;padding:9px 18px;font-weight:600}
+.pay code{background:#f3e8d8;padding:2px 8px;border-radius:6px;user-select:all}
+.go{width:100%;margin-top:20px;padding:14px;border:0;border-radius:12px;background:linear-gradient(var(--gold),#f5b800);color:var(--plum);font:700 17px Poppins;cursor:pointer}
+.go:disabled{opacity:.6}
+.calls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;font-size:13px;padding-top:10px;}
+.calls a{background:#ffffff1f;border:1px solid #ffd92e88;color:var(--gold);text-decoration:none;border-radius:20px;padding:6px 12px;font-weight:600}
+.hero{display:block;width:100%;max-width:480px;margin:6px auto -46px;-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
+header small{display:block}header small,h1,.meta,.note{position:relative}
+.req{color:#c62828}
+.map{width:100%;height:240px;border:0;border-radius:12px;margin-top:10px}
+.mapbtn{display:inline-block;margin-top:10px;background:var(--wine);color:#fff;text-decoration:none;border-radius:10px;padding:10px 18px;font-weight:600}
+footer a{color:var(--gold)}
+.terms{margin-top:18px;background:#fff;border-left:4px solid var(--wine);border-radius:10px;padding:10px 14px;font-size:13px}
+.terms ul{margin:6px 0 8px;padding-left:18px}
+.terms a{color:var(--wine);font-weight:600}
+.terms .chk{display:flex;gap:8px;align-items:flex-start;font-weight:500;margin:0}
+.terms .chk input{width:18px;height:18px;margin-top:2px;accent-color:var(--wine)}
+.hp{position:absolute;left:-9999px}
+.done{text-align:center}.done .id{font:34px 'Rozha One',serif;color:var(--wine);background:#fff;border-radius:12px;padding:10px;margin:12px 0}
+footer{text-align:center;color:#fff;font-size:13px;margin-top:18px;padding:0 12px}
+</style></head><body>
+<header>
+<img class="hero" src="hero.jpg" alt="Dandiya dancers">
+<small>Onestage Creation's presents</small>
+<h1>Dharwad's Dandiya Darbar - 2.0</h1>
+  
+<div class="calls">Call us:<a href="tel:6362431123">6362431123</a><a href="tel:9611840164">9611840164</a><a href="tel:8088062859">8088062859</a></div>
+</header>
+
+  <div style="text-align: center;">
+  <h2>🎉 Thank You for Making Dandiya Darbar 2.0 a Grand Success! 💃🏻✨</h2>
+
+  <p>
+    A heartfelt thank you to everyone who participated, brought their incredible energy,
+    and made this celebration truly memorable! ❤️ Your enthusiasm, smiles, and love
+    made the evening special, and we couldn’t have done it without you.
+  </p>
+
+  <p>
+    A big thank you to everyone who supported us and helped make this event a huge success. 🙏🏻❤️
+  </p>
+
+  <p>
+    This is not a goodbye, it’s <strong>Sayonara until next time!</strong> 🪩🥁
+  </p>
+
+  <p>
+    We look forward to seeing you all next year with the same energy, even bigger smiles,
+    and double the celebrations! 💃🏻🕺🏻
+  </p>
+
+  <p><strong>Until then, keep the Garba spirit alive! ❤️✨</strong></p>
+
+  <p>
+    With love,<br>
+    <strong>Team Dandiya Darbar 2.0</strong> 🎊
+  </p>
+</div>
+
+<footer>Need help? <a href="tel:6362431123">6362431123</a> · <a href="tel:9611840164">9611840164</a> · <a href="tel:8088062859">8088062859</a></footer>
+
+<script>
+window.onerror=function(m,u,l){var d=document.createElement("div");d.style.cssText="background:#fff;color:#b3261e;padding:10px;margin:10px;border-radius:8px;font:13px monospace;position:relative;z-index:9";d.textContent="Page error (line "+l+"): "+m;document.body.prepend(d)};
+</script>
+<script>
+// ====== SETTINGS ======
+const API = "https://script.google.com/macros/s/AKf/exec";
+const UPI = "1234567899@kotakbank", PAYEE = "Onestage Creation";
+// Paste your exact Google Maps links here (see instructions)
+const MAP_EMBED = "https://www.google.com/maps?q=Yeligar+Sports+Arena,+Tapovan+Nagar,+Dharwad&output=embed";
+const MAP_LINK = "https://www.google.com/maps/search/?api=1&query=Yeligar+Sports+Arena+Tapovan+Nagar+Dharwad";
+const TICKETS = [
+  {k:"stag", n:"Stag", d:"1 person", p:399},
+  {k:"couple", n:"Couple", d:"2 people", p:699},
+  {k:"group", n:"Group of 5", d:"5 people", p:1699},
+  {k:"kids", n:"Kids", d:"Above 6 and below 14 years", p:199}
+];
+// ======================
+const $ = id => document.getElementById(id);
+const qty = {stag:0, couple:0, group:0, kids:0};
+let coupon = null; // {code,type,value}
+const inr = n => "₹" + n.toLocaleString("en-IN");
+
+$("tickets").innerHTML = TICKETS.map(t => `<div class="tk"><div><b>${t.n}</b><small>${t.d}</small> · <em>${inr(t.p)}</em></div>
+<div class="qty"><button type="button" data-k="${t.k}" data-d="-1" aria-label="Remove ${t.n}">−</button><output id="q-${t.k}">0</output><button type="button" data-k="${t.k}" data-d="1" aria-label="Add ${t.n}">+</button></div></div>`).join("");
+
+$("tickets").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const k = b.dataset.k; qty[k] = Math.max(0, Math.min(20, qty[k] + +b.dataset.d));
+  $("q-" + k).textContent = qty[k]; calc();
+});
+
+function calc() {
+  const sub = TICKETS.reduce((s, t) => s + t.p * qty[t.k], 0);
+  let disc = 0, free = 0;
+  if (coupon && coupon.type === "freegroup") {
+    free = Math.floor(qty.group * coupon.value);
+    const m = $("cmsg"); m.className = "msg " + (free ? "ok" : "bad");
+    m.textContent = free ? `Coupon applied: you get ${free} free ticket${free > 1 ? "s" : ""}!` : "This code works only with Group of 5 tickets. Add one to get free tickets.";
+  } else if (coupon && sub) disc = coupon.type === "percent" ? Math.round(sub * coupon.value / 100) : Math.min(coupon.value, sub);
+  const tot = sub - disc;
+  $("sub").textContent = inr(sub); $("disc").textContent = "− " + inr(disc);
+  $("drow").style.display = disc ? "flex" : "none";
+  $("frow").style.display = free ? "flex" : "none"; $("free").textContent = "+ " + free + " free";
+  $("tot").textContent = $("amt2").textContent = inr(tot);
+  $("upi").href = `upi://pay?pa=${UPI}&pn=${encodeURIComponent(PAYEE)}&am=${tot}&cu=INR&tn=Dandiya`;
+  $("upi").style.display = tot ? "inline-block" : "none";
+  return tot;
+}
+
+$("coupon").addEventListener("input", () => { coupon = null; $("cmsg").textContent = ""; calc(); });
+$("apply").onclick = async () => {
+  const code = $("coupon").value.trim().toUpperCase(), m = $("cmsg");
+  if (!code) { m.textContent = ""; return; }
+  $("apply").disabled = true; m.className = "msg"; m.textContent = "Checking…";
+  try {
+    const r = await (await fetch(API + "?action=coupon&code=" + encodeURIComponent(code))).json();
+    if (r.valid) { coupon = {code, type:r.type, value:+r.value}; m.className = "msg ok"; m.textContent = "Coupon applied: " + (r.type === "percent" ? r.value + "% off" : r.type === "freegroup" ? "" : inr(+r.value) + " off"); }
+    else { coupon = null; m.className = "msg bad"; m.textContent = "Invalid code. Regular prices apply, you can still register."; }
+  } catch (e) { coupon = null; m.className = "msg bad"; m.textContent = "Could not check the code. Regular prices apply."; }
+  $("apply").disabled = false; calc();
+};
+
+function compress(file) {
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const s = Math.min(1, 1100 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+      c.width = img.width * s; c.height = img.height * s;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", .72).split(",")[1]);
+    };
+    img.onerror = () => rej(); img.src = url;
+  });
+}
+
+$("mobile").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, ""));
+$("utr").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, ""));
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const err = $("err"), go = $("go"); err.textContent = "";
+  const name = $("name").value.trim(), email = $("email").value.trim(), mobile = $("mobile").value, utr = $("utr").value, file = $("shot").files[0];
+  const total = calc();
+  if (name.length < 2) return err.textContent = "Enter your full name.";
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = "Enter a valid email address.";
+  if (!/^[6-9]\d{9}$/.test(mobile)) return err.textContent = "Enter a valid 10-digit mobile number.";
+  if (!total) return err.textContent = "Select at least one ticket.";
+  if (!/^\d{12}$/.test(utr)) return err.textContent = "UTR must be exactly 12 digits.";
+  if (!file) return err.textContent = "Payment screenshot is required. Please upload it.";
+  if (!$("agree").checked) return err.textContent = "Please accept the terms and conditions.";
+  go.disabled = true; go.textContent = "Submitting… please wait";
+  try {
+    const shot = await compress(file);
+    const r = await (await fetch(API, {method:"POST", body: JSON.stringify({
+      name, email, mobile, utr, qty, coupon: coupon ? coupon.code : ($("coupon").value.trim().toUpperCase()),
+      expected: total, shot, website: $("website").value })})).json();
+    if (!r.ok) throw new Error(r.msg);
+    $("f").innerHTML = `<div class="done"><h2>Thank you for registering!</h2><p><b>See you at the venue.</b></p>
+      <p>Registration ID: <b>${r.id}</b> · Amount: <b>${inr(r.amount)}</b></p>
+      ${r.free ? `<p>Free tickets included: <b>${r.free}</b></p>` : ""}
+      <p>Once your payment is verified, your entry QR code will be sent to your WhatsApp number ${mobile}. Show it at the gate.</p>
+      <iframe class="map" src="${MAP_EMBED}" loading="lazy" allowfullscreen></iframe>
+      <a class="mapbtn" href="${MAP_LINK}" target="_blank" rel="noopener">Open in Google Maps</a></div>`;
+    scrollTo({top:0, behavior:"smooth"});
+  } catch (x) {
+    err.textContent = x.message && x.message.length < 200 ? x.message : "Could not submit. Check your internet and try again.";
+    go.disabled = false; go.textContent = "Submit registration";
+  }
+});
+calc();
+</script>
+</body></html>
